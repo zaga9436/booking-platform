@@ -30,7 +30,7 @@ export class SeatsService {
     return this.prisma.seat.findMany({
       where: { eventId },
       orderBy: [
-        { row: 'asc' },
+        { row: 'asc' }, //ряд
         { number: 'asc' }
       ]
     });
