@@ -8,8 +8,11 @@ import { Multer } from 'multer';
 export class FilesService {
   private s3 = new S3Client({
     region: 'us-east-1',
-    endpoint: 'http://localhost:9000', 
-    credentials: { accessKeyId: 'minioadmin', secretAccessKey: 'minioadmin' },
+    endpoint: process.env.MINIO_ENDPOINT, 
+    credentials: { 
+        accessKeyId: process.env.MINIO_ACCESS_KEY,
+        secretAccessKey: process.env.MINIO_SECRET_KEY, 
+    },
     forcePathStyle: true,
   });
 
@@ -25,6 +28,6 @@ export class FilesService {
       }),
     );
 
-    return `http://localhost:9000/booking-images/${fileName}`;
+    return `${process.env.MINIO_ENDPOINT}/booking-images/${fileName}`;;
   }
 }
