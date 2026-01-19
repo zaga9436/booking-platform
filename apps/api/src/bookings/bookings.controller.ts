@@ -16,6 +16,6 @@ export class BookingsController {
   create(@Request() req: any, @Body() dto: CreateBookingDto) {
     return this.bookingsService.create(req.user.id, dto);
   }
-
+  
   
 }

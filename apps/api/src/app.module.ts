@@ -7,9 +7,10 @@ import { EventsModule } from './events/events.module';
 import { SeatsModule } from './seats/seats.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { PaymentsModule } from './payments/payments.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, EventsModule, SeatsModule, BookingsModule, PaymentsModule],
+  imports: [PrismaModule, AuthModule, EventsModule, SeatsModule, BookingsModule, PaymentsModule, FilesModule],
   controllers: [AppController],
   providers: [AppService],
 })
