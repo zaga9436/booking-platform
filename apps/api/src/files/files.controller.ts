@@ -1,6 +1,7 @@
-import { Controller, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, Get, Param, Res } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express'; 
 import { FilesService } from './files.service';
+import type { Response } from 'express';
 
 @Controller('files')
 export class FilesController {
@@ -11,4 +12,10 @@ export class FilesController {
     return this.filesService.uploadFile(file);
   }
 
+
+  @Get(':fileName')
+  async getFile(@Param('fileName') fileName: string, @Res() res: Response) {
+    const stream = await this.filesService.getFileStream(fileName);
+    stream.pipe(res);
+  }
 }

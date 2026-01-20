@@ -14,6 +14,7 @@ export class EventsService {
         description: dto.description,
         location: dto.location,
         date: new Date(dto.date),
+        image: dto.image,
       },
     });
   }
