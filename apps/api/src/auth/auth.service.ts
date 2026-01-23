@@ -4,7 +4,7 @@ import { RegisterDto } from './dto/register.dto';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
-
+import type { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +33,7 @@ export class AuthService {
         };
     }
 
-    async login(dto: LoginDto){
+    async login(dto: LoginDto, res: Response){
         const user = await this.prisma.user.findUnique({
             where: { email: dto.email },
         });
@@ -49,9 +49,16 @@ export class AuthService {
             sub: user.id,
             email: user.email
         };
-        return {
-            accessToken: await this.jwtService.signAsync(payload),
-        };
+        
+        const accessToken = await this.jwtService.signAsync(payload);
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 1000 * 60 * 24 * 7,
+        });
+
+        return { message: 'Logged in successfuly' };
     }
 
 }
