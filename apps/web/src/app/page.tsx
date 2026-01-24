@@ -30,7 +30,7 @@ export default async function HomePage() {
 
   const heroEvent: EventData | null = events.length > 0 ? events[0]! : null;
 
-  const popularEvents = events.slice(1);
+  const popularEvents = events;
 
   return (
     <div className="bg-[#f0f0f0] min-h-screen">

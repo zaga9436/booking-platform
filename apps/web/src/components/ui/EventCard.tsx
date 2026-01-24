@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { EventData } from "../../lib/types";
 
@@ -17,12 +16,10 @@ export default function EventCard({ event }: EventCardProps) {
       <div className="border border-black rounded-lg shadow-sm bg-white overflow-hidden transition-all hover:shadow-md hover:border-blue-500 cursor-pointer">
         <div className="relative aspect-[4/5] w-full">
           {event.image ? (
-            <Image
-              src={event.image}
+            <img
+              src={`http://localhost:4000/files/${event.image}`}
               alt={event.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 33vw"
+              className="absolute inset-0 w-full h-full object-cover"
             />
           ) : (
             <div className="flex items-center justify-center h-full bg-gray-100 text-gray-500">

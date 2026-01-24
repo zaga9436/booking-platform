@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { EventData } from "../lib/types";
 import { Button } from "@/components/ui/button";
@@ -30,13 +29,10 @@ export default function HeroSlider({ event }: HeroSliderProps) {
   return (
     <div className="relative w-full h-96 rounded-lg overflow-hidden border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
       {event.image ? (
-        <Image
-          src={event.image}
+        <img
+          src={`http://localhost:4000/files/${event.image}`}
           alt={event.name}
-          fill
-          className="object-cover"
-          sizes="100vw"
-          priority
+          className="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
         <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600">
