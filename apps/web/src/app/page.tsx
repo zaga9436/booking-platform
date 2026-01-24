@@ -9,14 +9,9 @@ async function getEvents(): Promise<EventData[]> {
     const res = await fetch("http://localhost:4000/events", {
       cache: "no-store",
     });
-
-    if (!res.ok) {
-      throw new Error(
-        `Failed to fetch events: ${res.status} ${res.statusText}`,
-      );
-    }
-
-    return res.json();
+    const data = await res.json();
+    console.log("EVENTS FROM API:", data);
+    return data;
   } catch (error) {
     console.error("Error fetching events:", error);
     return [];

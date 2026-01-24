@@ -29,8 +29,10 @@ export class EventsService {
   }
 
   async findOne(id: string) {
-    return this.prisma.event.findUnique({
+    const event = await this.prisma.event.findUnique({
       where: { id },
     });
+    console.log('Found event:', event);
+    return event;
   }
 }

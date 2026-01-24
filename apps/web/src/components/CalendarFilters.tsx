@@ -13,7 +13,7 @@ export default function CalendarFilters() {
   const dateToParse = (currentUrlDate || new Date().toISOString()) as string;
   const initialDate = new Date(dateToParse).getDate();
 
-  const [selectedDate, setSelectedDate] = useState<number>(initialDate); // <--- number, а не number | null
+  const [selectedDate, setSelectedDate] = useState<number>(initialDate);
 
   const getNext7Days = () => {
     const today = new Date();
@@ -42,25 +42,23 @@ export default function CalendarFilters() {
       <h3 className="font-semibold mb-3 text-lg">
         {new Date().toLocaleDateString("ru-RU", { month: "long" })}
       </h3>
-      {/* <--- Календарь-фильтры: ОТРЕДАКТИРОВАНО */}
+
       <div className="flex space-x-2 justify-between overflow-x-auto pb-2">
         {" "}
-        {/* <--- Добавил overflow-x-auto */}
         {days.map((item) => (
           <button
             key={item.fullDate}
             onClick={() => handleDateClick(item.dateNum, item.fullDate)}
             className={cn(
-              "flex flex-col items-center justify-center p-2 rounded-lg transition-colors flex-shrink-0", // <--- flex-shrink-0, чтобы не сжимались
-              "w-16 h-20", // <--- Увеличил размер
+              "flex flex-col items-center justify-center p-2 rounded-lg transition-colors flex-shrink-0",
+              "w-16 h-20",
               selectedDate === item.dateNum
-                ? "bg-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" // <--- Добавил тень
+                ? "bg-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                 : "bg-gray-100 hover:bg-gray-200",
             )}
           >
             <span className="text-xs">{item.dayOfWeek.slice(0, 2)}</span>
             <span className="font-bold text-xl mt-1">{item.dateNum}</span>{" "}
-            {/* <--- Увеличил размер даты */}
           </button>
         ))}
       </div>

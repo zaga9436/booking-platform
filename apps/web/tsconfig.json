@@ -1,7 +1,7 @@
 {
   "extends": "../../packages/typescript-config/nextjs.json",
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "jsx": "preserve",
     "types": ["node", "react", "react-dom"],
     "moduleResolution": "bundler",
@@ -11,7 +11,7 @@
       }
     ],
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["src/*"]
     }
   },
   "include": [

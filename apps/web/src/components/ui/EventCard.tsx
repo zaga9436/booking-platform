@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EventData } from "../../lib/types";
+import { EventData } from "@/lib/types";
 
 interface EventCardProps {
   event: EventData;
@@ -12,7 +12,7 @@ export default function EventCard({ event }: EventCardProps) {
   });
 
   return (
-    <Link href={`/event/${event.id}`}>
+    <Link href={`/events/${event.id}`}>
       <div className="border border-black rounded-lg shadow-sm bg-white overflow-hidden transition-all hover:shadow-md hover:border-blue-500 cursor-pointer">
         <div className="relative aspect-[4/5] w-full">
           {event.image ? (
@@ -26,12 +26,10 @@ export default function EventCard({ event }: EventCardProps) {
               Нет изображения
             </div>
           )}
-
           <span className="absolute top-2 left-2 bg-white text-xs font-semibold px-1.5 py-0.5 rounded border border-black">
             12+
           </span>
         </div>
-
         <div className="p-3">
           <h3 className="text-sm font-semibold truncate">{event.name}</h3>
           <p className="text-xs text-gray-500 mt-1">{event.location}</p>
