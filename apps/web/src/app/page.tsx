@@ -1,8 +1,8 @@
-import Header from "../components/ui/layout/Header";
-import EventCard from "../components/ui/EventCard";
-import HeroSlider from "../components/HeroSlider";
-import CalendarFilters from "../components/CalendarFilters";
-import type { EventData } from "../lib/types";
+import Header from "@/components/ui/layout/Header";
+import EventCard from "@/components/ui/EventCard";
+import HeroSlider from "@/components/HeroSlider";
+import CalendarFilters from "@/components/CalendarFilters";
+import type { EventData } from "@/lib/types";
 
 async function getEvents(): Promise<EventData[]> {
   try {
