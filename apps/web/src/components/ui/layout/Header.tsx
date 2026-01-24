@@ -7,16 +7,12 @@ export default function Header() {
       <div className="max-w-[1200px] mx-auto p-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold">АФИША УФЫ</h1>
         <div className="flex items-center space-x-4">
-          <Link href="/login" className="text-sm font-medium hover:underline">
-            Личный кабинет
-          </Link>
-
           <div className="border border-black p-2 rounded-full cursor-pointer">
             🔍
           </div>
-          <div className="border border-black p-2 rounded-full cursor-pointer">
-            ☰
-          </div>
+          <Link href="/login" className="text-sm font-medium hover:underline">
+            Личный кабинет
+          </Link>
         </div>
       </div>
       <nav className="bg-yellow-400 p-2">

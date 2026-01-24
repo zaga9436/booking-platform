@@ -28,7 +28,7 @@ export default function EventPage() {
           setSeats(seatsData);
         } catch (error) {
           console.error("Failed to fetch event data:", error);
-          setEvent(null); // Устанавливаем в null при ошибке
+          setEvent(null);
         } finally {
           setIsLoading(false);
         }
@@ -37,7 +37,6 @@ export default function EventPage() {
     }
   }, [eventId]);
 
-  // --- Экран загрузки ---
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -46,7 +45,6 @@ export default function EventPage() {
     );
   }
 
-  // --- Экран, если событие не найдено ---
   if (!event) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -55,7 +53,6 @@ export default function EventPage() {
     );
   }
 
-  // --- Основная страница, когда данные есть ---
   const formattedDate = new Date(event.date).toLocaleDateString("ru-RU", {
     month: "long",
     day: "numeric",

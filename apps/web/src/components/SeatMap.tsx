@@ -13,79 +13,137 @@ export default function SeatMap({ seats }: SeatMapProps) {
   const [selectedSeat, setSelectedSeat] = useState<SeatData | null>(null);
 
   const rows = seats.reduce<Record<number, SeatData[]>>((acc, seat) => {
-    if (!acc[seat.row]) {
-      acc[seat.row] = [];
-    }
-
+    if (!acc[seat.row]) acc[seat.row] = [];
     acc[seat.row]!.push(seat);
     return acc;
   }, {});
 
   const handleSeatClick = (seat: SeatData) => {
-    if (seat.status === "SOLD") {
-      return;
-    }
+    if (seat.status === "SOLD") return;
+    setSelectedSeat((prev) => (prev?.id === seat.id ? null : seat));
+  };
 
-    if (selectedSeat && selectedSeat.id === seat.id) {
-      setSelectedSeat(null);
-    } else {
-      setSelectedSeat(seat);
-    }
+  const firstRow = Object.values(rows)[0];
+  const numColumns = firstRow?.length || 10;
+
+  const gridStyle = {
+    gridTemplateColumns: `repeat(${numColumns}, minmax(0, 1fr))`,
   };
 
   return (
-    <div className="border border-black p-6 bg-white rounded-lg shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-      <h2 className="font-bold text-2xl text-center mb-6">Выберите место</h2>
+    <div className="border-4 border-black p-6 md:p-10 bg-[#FAF9F6] rounded-xl shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] max-w-4xl mx-auto">
+      <h2 className="font-black text-3xl md:text-4xl text-center mb-8 uppercase tracking-tighter">
+        Выбор места
+      </h2>
 
-      <div className="w-3/4 h-8 mx-auto bg-gray-300 border-2 border-black mb-10 text-center font-bold text-gray-600">
-        СЦЕНА
+      <div className="relative mb-16">
+        <div className="w-full h-4 bg-black rounded-full blur-md opacity-20 absolute -bottom-2"></div>
+        <div className="w-full h-12 bg-black text-white rounded-lg flex items-center justify-center font-black tracking-[0.3em] text-lg shadow-[0_10px_20px_rgba(0,0,0,0.3)]">
+          СЦЕНА
+        </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="flex justify-center gap-6 mb-10 text-sm font-bold">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 bg-white border-2 border-black rounded-md"></div>
+          <span>Свободно</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 bg-black opacity-20 border-2 border-black rounded-md"></div>
+          <span>Занято</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 bg-yellow-400 border-2 border-black rounded-md"></div>
+          <span>Выбрано</span>
+        </div>
+      </div>
+
+      <div className="space-y-4 overflow-x-auto pb-6 px-2 custom-scrollbar">
         {Object.entries(rows).map(([rowNum, seatsInRow]) => (
           <div
             key={rowNum}
-            className="flex items-center justify-center space-x-2"
+            className="flex items-center min-w-max justify-center"
           >
-            <span className="font-bold w-8 text-right">{rowNum}</span>
-            {seatsInRow.map((seat) => (
-              <button
-                key={seat.id}
-                onClick={() => handleSeatClick(seat)}
-                disabled={seat.status === "SOLD"}
-                className={cn(
-                  "w-8 h-8 rounded-md font-bold text-xs transition-transform",
-                  {
-                    "bg-gray-300 cursor-not-allowed": seat.status === "SOLD",
-                    "bg-yellow-400 hover:bg-yellow-500":
-                      seat.status === "AVAILABLE",
-                    "ring-2 ring-blue-500 ring-offset-2":
-                      selectedSeat?.id === seat.id,
-                  },
-                )}
-              >
-                {seat.number}
-              </button>
-            ))}
+            <div className="font-black w-12 text-right pr-4 text-black/30 text-lg tabular-nums">
+              {rowNum}
+            </div>
+
+            <div className="grid gap-3" style={gridStyle}>
+              {seatsInRow.map((seat) => {
+                const isSelected = selectedSeat?.id === seat.id;
+                const isSold = seat.status === "SOLD";
+
+                return (
+                  <button
+                    key={seat.id}
+                    onClick={() => handleSeatClick(seat)}
+                    disabled={isSold}
+                    className={cn(
+                      "w-10 h-11 md:w-12 md:h-14 rounded-t-xl rounded-b-md font-black text-xs md:text-sm transition-all duration-200 relative tabular-nums",
+                      "border-2 border-black",
+                      !isSold &&
+                        !isSelected &&
+                        "bg-white hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
+                      isSold && "bg-black cursor-not-allowed opacity-20",
+                      isSelected &&
+                        "bg-yellow-400 -translate-y-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "absolute -bottom-1 left-1 right-1 h-1 bg-black/10 rounded-full",
+                        isSelected && "bg-black/20",
+                      )}
+                    ></div>
+                    {seat.number}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="font-black w-12 text-left pl-4 text-black/30 text-lg tabular-nums">
+              {rowNum}
+            </div>
           </div>
         ))}
       </div>
 
-      {selectedSeat && (
-        <div className="mt-8 pt-4 border-t border-black text-center">
-          <p className="font-bold">Выбрано:</p>
-          <p>
-            Ряд: <span className="font-black">{selectedSeat.row}</span>, Место:{" "}
-            <span className="font-black">{selectedSeat.number}</span>
-          </p>
-          <p>
-            Цена: <span className="font-black">{selectedSeat.price} ₽</span>
-          </p>
-          <Button className="mt-4 rounded-none border-2 border-black bg-green-400 text-black font-bold hover:bg-green-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            Купить
-          </Button>
+      <div
+        className={cn(
+          "mt-10 overflow-hidden transition-all duration-500 max-h-0",
+          selectedSeat && "max-h-[400px]",
+        )}
+      >
+        <div className="p-6 border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative">
+          <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#FAF9F6] border-4 border-black rounded-full"></div>
+          <div className="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#FAF9F6] border-4 border-black rounded-full"></div>
+
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-left">
+              <p className="text-xs font-black uppercase text-gray-400 mb-1">
+                Ваш выбор
+              </p>
+              <div className="flex gap-4 items-baseline">
+                <span className="text-3xl md:text-4xl font-black italic uppercase">
+                  Ряд {selectedSeat?.row}
+                </span>
+                <span className="text-3xl md:text-4xl font-black italic text-yellow-500 uppercase">
+                  Место {selectedSeat?.number}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center md:items-end w-full md:w-auto">
+              <span className="text-3xl font-black mb-2">
+                {selectedSeat?.price} ₽
+              </span>
+              <Button className="w-full md:w-auto h-14 px-10 rounded-none border-4 border-black bg-[#ff5c00] text-white font-black text-xl hover:bg-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1">
+                КУПИТЬ БИЛЕТ
+              </Button>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
