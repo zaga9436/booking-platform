@@ -5,4 +5,5 @@ export interface EventData {
   date: string;
   image: string | null;
   location: string | null;
+  category: string;
 }
