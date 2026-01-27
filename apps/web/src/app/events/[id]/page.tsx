@@ -72,7 +72,7 @@ export default function EventPage() {
           {event.description && <p className="mb-4">{event.description}</p>}
         </section>
 
-        <SeatMap seats={seats} />
+        <SeatMap seats={seats} eventId={eventId} eventName={event.name} />
       </main>
     </div>
   );

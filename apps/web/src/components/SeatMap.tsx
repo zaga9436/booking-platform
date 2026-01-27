@@ -1,16 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 import type { SeatData } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
 interface SeatMapProps {
   seats: SeatData[];
+  eventName: string;
+  eventId: string;
 }
 
-export default function SeatMap({ seats }: SeatMapProps) {
+export default function SeatMap({ seats, eventName, eventId }: SeatMapProps) {
   const [selectedSeat, setSelectedSeat] = useState<SeatData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const rows = seats.reduce<Record<number, SeatData[]>>((acc, seat) => {
     if (!acc[seat.row]) acc[seat.row] = [];
@@ -23,9 +29,47 @@ export default function SeatMap({ seats }: SeatMapProps) {
     setSelectedSeat((prev) => (prev?.id === seat.id ? null : seat));
   };
 
+  const handleBuyTicket = async () => {
+    if (!selectedSeat) return;
+
+    setIsLoading(true);
+    try {
+      const bookingRes = await axios.post(
+        "http://localhost:4000/bookings",
+        { seatId: selectedSeat.id },
+        { withCredentials: true },
+      );
+      const booking = bookingRes.data;
+
+      const paymentRes = await axios.post(
+        "http://localhost:4000/payments",
+        {
+          amount: selectedSeat.price,
+          description: `Билет на ${eventName}, Ряд ${selectedSeat.row}, Место ${selectedSeat.number}`,
+          metadata: { bookingId: booking.id },
+        },
+        { withCredentials: true },
+      );
+
+      const payment = paymentRes.data;
+
+      if (payment.confirmation?.confirmation_url) {
+        window.location.href = payment.confirmation.confirmation_url;
+      }
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        router.push(`/login?redirect=/events/${eventId}`);
+      } else {
+        console.error("Ошибка при покупке:", error);
+        alert("Произошла ошибка. Попробуйте снова.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const firstRow = Object.values(rows)[0];
   const numColumns = firstRow?.length || 10;
-
   const gridStyle = {
     gridTemplateColumns: `repeat(${numColumns}, minmax(0, 1fr))`,
   };
@@ -67,12 +111,10 @@ export default function SeatMap({ seats }: SeatMapProps) {
             <div className="font-black w-12 text-right pr-4 text-black/30 text-lg tabular-nums">
               {rowNum}
             </div>
-
             <div className="grid gap-3" style={gridStyle}>
               {seatsInRow.map((seat) => {
                 const isSelected = selectedSeat?.id === seat.id;
                 const isSold = seat.status === "SOLD";
-
                 return (
                   <button
                     key={seat.id}
@@ -100,7 +142,6 @@ export default function SeatMap({ seats }: SeatMapProps) {
                 );
               })}
             </div>
-
             <div className="font-black w-12 text-left pl-4 text-black/30 text-lg tabular-nums">
               {rowNum}
             </div>
@@ -117,7 +158,6 @@ export default function SeatMap({ seats }: SeatMapProps) {
         <div className="p-6 border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative">
           <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#FAF9F6] border-4 border-black rounded-full"></div>
           <div className="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#FAF9F6] border-4 border-black rounded-full"></div>
-
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-left">
               <p className="text-xs font-black uppercase text-gray-400 mb-1">
@@ -132,13 +172,16 @@ export default function SeatMap({ seats }: SeatMapProps) {
                 </span>
               </div>
             </div>
-
             <div className="flex flex-col items-center md:items-end w-full md:w-auto">
               <span className="text-3xl font-black mb-2">
                 {selectedSeat?.price} ₽
               </span>
-              <Button className="w-full md:w-auto h-14 px-10 rounded-none border-4 border-black bg-[#ff5c00] text-white font-black text-xl hover:bg-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1">
-                КУПИТЬ БИЛЕТ
+              <Button
+                onClick={handleBuyTicket}
+                disabled={isLoading}
+                className="w-full md:w-auto h-14 px-10 rounded-none border-4 border-black bg-[#ff5c00] text-white font-black text-xl hover:bg-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1"
+              >
+                {isLoading ? "ОБРАБОТКА..." : "КУПИТЬ БИЛЕТ"}
               </Button>
             </div>
           </div>

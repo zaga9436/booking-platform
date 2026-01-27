@@ -10,7 +10,7 @@ export default function Header() {
           <div className="border border-black p-2 rounded-full cursor-pointer">
             🔍
           </div>
-          <Link href="/login" className="text-sm font-medium hover:underline">
+          <Link href="/profile" className="text-sm font-medium hover:underline">
             Личный кабинет
           </Link>
         </div>

@@ -1,32 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
+
+interface CreatePaymentDto {
+  amount: number;
+  description: string;
+  metadata?: any;
+}
+
+interface CheckPaymentDto {
+  paymentId: string;
+}
 
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post()
-  create(@Body() dto: { amount: number }) {
-    return this.paymentsService.createPayment(dto.amount, 'Test Order');
+  create(@Body() dto: CreatePaymentDto) {
+    return this.paymentsService.createPayment(
+      dto.amount,
+      dto.description,
+      dto.metadata,
+    );
   }
 
-  @Post('webhook')
-  handleWebhook(@Body() event: any) {
-  console.log('WEBHOOK RECEIVED:', event);
-  return 'ok';
-  }
-  
   @Post('check')
-  async check(@Body() dto: { paymentId: string }) {
+  async check(@Body() dto: CheckPaymentDto) {
     const payment = await this.paymentsService.checkPayment(dto.paymentId);
-    
+
     if (payment.status === 'succeeded') {
       return { status: 'success', message: 'Payment successful!' };
     }
-    
+
     return { status: payment.status, message: 'Waiting for payment...' };
   }
- 
 }
