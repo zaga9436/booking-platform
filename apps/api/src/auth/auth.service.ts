@@ -24,16 +24,13 @@ export class AuthService {
     if (oldUser) {
       throw new BadRequestException('User already exists');
     }
-
     const passwordHash = await argon2.hash(dto.password);
-
     const user = await this.prisma.user.create({
       data: {
         email: dto.email,
         password: passwordHash,
       },
     });
-
     return {
       id: user.id,
       email: user.email,
@@ -51,22 +48,27 @@ export class AuthService {
     if (!isValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-
     const payload = {
       sub: user.id,
       email: user.email,
     };
-
     const accessToken = await this.jwtService.signAsync(payload);
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      //secure: process.env.NODE_ENV === 'production',
       secure: false,
       path: '/',
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+    return { message: 'Logged in successfully' };
+  }
 
-    return { message: 'Logged in successfuly' };
+  logout(res: Response) {
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      path: '/',
+      sameSite: 'lax',
+    });
+    return { message: 'Logged out' };
   }
 }

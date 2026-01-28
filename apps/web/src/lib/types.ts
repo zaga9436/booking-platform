@@ -18,3 +18,16 @@ export interface SeatData {
   status: "AVAILABLE" | "SOLD" | "LOCKED";
   eventId: string;
 }
+export interface BookingData {
+  id: string;
+  status: "PENDING" | "CONFIRMED" | "CANCELLED";
+  seat: {
+    row: number;
+    number: number;
+    event: {
+      name: string;
+      date: string;
+      location: string | null;
+    };
+  };
+}
